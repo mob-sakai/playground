@@ -61,10 +61,14 @@ jobs:
 #           github-token: ${{ github.token }}
           include-any-issue-labels: |
             failure report
+      - uses: maxkomarychev/oction-lock-issue@v0.7.1
+        with:
+          token: ${{ github.token }}
+          issue_number: steps.ci.outputs.number
 
       - run: |
           echo "fi -> "${{ steps.fi.outputs.issue-number }}
-          echo "ci -> "${{ steps.ci.outputs.issue-number }}
+          echo "ci -> "${{ steps.ci.outputs.number }}
       
 
 #       - name: Create comment
