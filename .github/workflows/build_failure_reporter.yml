@@ -36,15 +36,23 @@ jobs:
 
       - run: echo "${{ toJson(steps.fi.outputs) }}"
       
-      - name: Create Issue From File
-        uses: peter-evans/create-issue-from-file@v3
-        if: steps.fi.outputs.has_found == 'false'
+      - uses: maxkomarychev/oction-create-issue@v0.7.1
         id: ci
         with:
+          token: ${{ github.token }}
           title: "🔒 Failed building tags (editor)🚨"
-          content-filepath: ./custom.md
           labels: |
             failure report
+          
+#       - name: Create Issue From File
+#         uses: peter-evans/create-issue-from-file@v3
+#         if: steps.fi.outputs.has_found == 'false'
+#         id: ci
+#         with:
+#           title: "🔒 Failed building tags (editor)🚨"
+#           content-filepath: ./custom.md
+#           labels: |
+#             failure report
         
       - run: echo "${{ toJson(steps.ci.outputs) }}"
     
