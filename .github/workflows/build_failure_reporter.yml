@@ -42,7 +42,7 @@ jobs:
         id: ci
         with:
           title: "🔒 Failed building tags (editor)🚨"
-          content-filepath: .github/ISSUE_TEMPLATE/failure-report.md
+          content-filepath: ./custom.md
           labels: |
             failure report
         
