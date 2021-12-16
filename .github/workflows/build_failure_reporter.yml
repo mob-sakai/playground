@@ -42,7 +42,7 @@ jobs:
         id: ci
         with:
           title: "🔒 Failed building tags (editor)🚨"
-          content-filepath: README.md
+          content-filepath: ./README.md
           labels: |
             failure report
         
