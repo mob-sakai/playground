@@ -26,7 +26,7 @@ jobs:
     steps:
       - name: Find Issue
         id: fi
-        uses: micalevisk/find-last-issue@v1
+        uses: micalevisk/last-issue-action@v1.2.2
         with:
           labels: |
             failure report
