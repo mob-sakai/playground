@@ -34,10 +34,11 @@ jobs:
 #           ## Optional since it uses the `GITHUB_TOKEN` created by GitHub by default
 #           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - run: echo ${{ toJson(steps.fi.outputs) }}
+      - run: echo "${{ toJson(steps.fi.outputs) }}"
       
       - name: Create Issue From File
         uses: peter-evans/create-issue-from-file@v3
+        if: steps.fi.outputs.has_found == 'false'
         id: ci
         with:
           title: An example issue
@@ -45,7 +46,7 @@ jobs:
           labels: |
             failure report
           
-      - run: echo ${{ toJson(steps.ci.outputs) }}
+      - run: echo "${{ toJson(steps.ci.outputs) }}"
     
       - uses: dessant/lock-threads@v3
         with:
