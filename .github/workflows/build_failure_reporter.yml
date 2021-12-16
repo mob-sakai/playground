@@ -1,0 +1,88 @@
+# Editor build failure reporter
+# ========================================================
+#
+# [Required secrets]
+#   GH_WORKFLOW_TOKEN:  Github parsonal access token to dispatch workflow
+name: "Build Editor Failed 🚨"
+
+env:
+  # ================ Repository settings ================
+  ISSUE_NUMBER: 19
+
+on:
+  workflow_dispatch:
+    inputs:
+      imageTag:
+        description: "The image tag that failed to build"
+        required: true
+        default: "2017.4.30f1-webgl-1.0.0"
+
+jobs:
+  comment:
+    name: Comment for the image tag '${{ github.event.inputs.imageTag }}'
+    runs-on: ubuntu-latest
+#     outputs:
+#       already-commented: ${{ steps.fc.outputs.comment-id != '' }}
+    steps:
+      - name: Find Issue
+        id: fi
+        uses: micalevisk/find-last-issue@v1
+        with:
+          labels: |
+            failure report
+#         env:
+#           ## Optional since it uses the `GITHUB_TOKEN` created by GitHub by default
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - run: echo ${{ toJson(steps.fi.outputs) }}
+      
+      - name: Create Issue From File
+        uses: peter-evans/create-issue-from-file@v3
+        id: ci
+        with:
+          title: An example issue
+#           content-filepath: ./example-content/output.md
+          labels: |
+            failure report
+          
+      - run: echo ${{ toJson(steps.ci.outputs) }}
+      
+      - uses: dessant/lock-threads@v3
+        with:
+#           github-token: ${{ github.token }}
+          include-any-issue-labels: 'failure report'
+      
+      - run: |
+          echo "fi -> "${{ steps.fi.outputs.issue-number }}
+          echo "ci -> "${{ steps.ci.outputs.issue-number }}
+      
+
+#       - name: Create comment
+#         if: steps.fc.outputs.comment-id == ''
+#         uses: peter-evans/create-or-update-comment@v1
+#         with:
+#           issue-number: ${{ env.ISSUE_NUMBER }}
+#           token: ${{ secrets.GH_WORKFLOW_TOKEN }}
+#           body: |
+#             The build '${{ github.event.inputs.imageTag }}' failed.
+#             If it fails again, it will be added to the ignore list.
+
+#   ignore:
+#     name: Ignore the image tag '${{ github.event.inputs.imageTag }}' for workflow
+#     needs: comment
+#     if: needs.comment.outputs.already-commented == 'true'
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v2
+#         with:
+#           ref: main
+
+#       - run: |
+#           [ -n "$(cat .env | grep ${{ github.event.inputs.imageTag }} )" ] && exit 0
+#           sed -i -e "s/<<AUTO_IGNORED_IMAGE_TAGS>>/&\\n${{ github.event.inputs.imageTag }}/" .env
+
+#       - uses: EndBug/add-and-commit@v7
+#         with:
+#           default_author: github_actions
+          message: Ignore ${{ github.event.inputs.imageTag }}
+          pull: --rebase --autostash
