@@ -46,12 +46,13 @@ jobs:
             failure report
           
       - run: echo ${{ toJson(steps.ci.outputs) }}
-      
+    
       - uses: dessant/lock-threads@v3
         with:
 #           github-token: ${{ github.token }}
-          include-any-issue-labels: 'failure report'
-      
+          include-any-issue-labels: |
+            failure report
+
       - run: |
           echo "fi -> "${{ steps.fi.outputs.issue-number }}
           echo "ci -> "${{ steps.ci.outputs.issue-number }}
