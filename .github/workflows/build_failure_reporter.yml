@@ -41,11 +41,11 @@ jobs:
         if: steps.fi.outputs.has_found == 'false'
         id: ci
         with:
-          title: An example issue
-#           content-filepath: ./example-content/output.md
+          title: "🔒 Failed building tags (editor)🚨"
+          content-filepath: README.md
           labels: |
             failure report
-          
+        
       - run: echo "${{ toJson(steps.ci.outputs) }}"
     
       - uses: dessant/lock-threads@v3
