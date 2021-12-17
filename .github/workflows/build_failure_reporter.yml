@@ -32,13 +32,15 @@ jobs:
 
       - run: echo "${{ toJson(steps.fi.outputs) }}"
       
-      - name: Create Issue
+      - name: Create Issue 
         uses: maxkomarychev/oction-create-issue@v0.7.1
         if: steps.fi.outputs.has_found == 'false'
         id: ci
         with:
           token: ${{ github.token }}
           title: "🔒 Failed building tags (editor)🚨"
+          body: |
+            test test test
           labels: |
             failure report
 
@@ -55,6 +57,7 @@ jobs:
         id: fc
         with:
           issue-number: ${{ steps.fi.outputs.issue_number }}${{ steps.ci.outputs.number }}
+          comment-author: "github-actions[bot]"
           body-includes: ${{ github.event.inputs.imageTag }}
           
       - run: echo "${{ toJson(steps.fc.outputs) }}"
