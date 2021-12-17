@@ -57,7 +57,7 @@ jobs:
           issue-number: ${{ steps.fi.outputs.issue_number }}${{ steps.ci.outputs.number }}
           body-includes: ${{ github.event.inputs.imageTag }}
           
-      - run: echo "${{ toJson(steps.ｆｃ.outputs) }}"
+      - run: echo "${{ toJson(steps.fc.outputs) }}"
 
       - name: Create Comment
         if: steps.fc.outputs.comment-id == ''
