@@ -26,11 +26,6 @@ jobs:
         with:
           labels: |
             failure report
-#         env:
-#           ## Optional since it uses the `GITHUB_TOKEN` created by GitHub by default
-#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - run: echo "${{ toJson(steps.fi.outputs) }}"
       
       - name: Create Issue 
         uses: maxkomarychev/oction-create-issue@v0.7.1
@@ -44,14 +39,6 @@ jobs:
           labels: |
             failure report
 
-      - run: echo "${{ steps.fi.outputs.issue_number }}${{ steps.ci.outputs.number }}"
-      
-#       - name: Lock Issue
-#         uses: maxkomarychev/oction-lock-issue@v0.7.1
-#         with:
-#           token: ${{ github.token }}
-#           issue_number: ${{ steps.fi.outputs.issue_number }}${{ steps.ci.outputs.number }}
-
       - name: Find Comment
         uses: peter-evans/find-comment@v1
         id: fc
@@ -59,15 +46,12 @@ jobs:
           issue-number: ${{ steps.fi.outputs.issue_number }}${{ steps.ci.outputs.number }}
           comment-author: "github-actions[bot]"
           body-includes: ${{ github.event.inputs.imageTag }}
-          
-      - run: echo "${{ toJson(steps.fc.outputs) }}"
 
       - name: Create Comment
         if: steps.fc.outputs.comment-id == ''
         uses: peter-evans/create-or-update-comment@v1
         with:
           issue-number: ${{ steps.fi.outputs.issue_number }}${{ steps.ci.outputs.number }}
-#           token: ${{ secrets.GH_WORKFLOW_TOKEN }}
           body: |
             The build '${{ github.event.inputs.imageTag }}' failed.
             If it fails again, it will be added to the ignore list.
