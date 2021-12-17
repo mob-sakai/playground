@@ -61,7 +61,7 @@ jobs:
         if: steps.fc.outputs.comment-id == ''
         uses: peter-evans/create-or-update-comment@v1
         with:
-          issue-number: ${{ env.ISSUE_NUMBER }}
+          issue-number: ${{ steps.fi.outputs.issue_number }}${{ steps.ci.outputs.number }}
 #           token: ${{ secrets.GH_WORKFLOW_TOKEN }}
           body: |
             The build '${{ github.event.inputs.imageTag }}' failed.
