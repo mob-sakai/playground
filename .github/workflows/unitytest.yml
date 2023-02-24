@@ -50,5 +50,5 @@ jobs:
     steps:
       # Checkout sandbox project
       - run: |
-          echo ${{ matrix.version }}
-          echo ${{ secrets.licence }}
+          echo "${{ matrix.version }}"
+          echo "${{ secrets.licence }}"
