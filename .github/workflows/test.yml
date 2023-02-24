@@ -1,5 +1,5 @@
 # Required repository secrets
-#   UNITY_LICENSE: Unity License File (*.ulf)
+#   UNITY_LICENSE: The contents of Unity License File (*.ulf)
 name: test
 
 env:
@@ -12,11 +12,10 @@ env:
   # MODULES: Included specific modules of Unity. base|windows-mono|mac-mono|linux-il2cpp|webgl|android|ios
   MODULES: |
     base
-    linux-il2cpp
 
   # ADDITIONAL_VERSIONS: Included specific versions of Unity.
-  ADDITIONAL_VERSIONS: |
-    2020.3.10f1
+  # ADDITIONAL_VERSIONS: |
+  #   2020.3.10f
 
 on:
   push:
@@ -100,7 +99,7 @@ jobs:
         uses: game-ci/unity-test-runner@v2
         with:
           customImage: mobsakai/unity3d:${{ matrix.version }}-${{ matrix.module }}
-          customParameters: -nographics --logFile log.txt
+          customParameters: -nographics
           checkName: ${{ matrix.version }}-${{ matrix.module }} Test Results
           githubToken: ${{ github.token }}
           projectPath: .
@@ -108,4 +107,5 @@ jobs:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
 
       - run: |
-          cat log.txt
+          ls -al
+          cat ~/.config/unity3d/Editor.log
