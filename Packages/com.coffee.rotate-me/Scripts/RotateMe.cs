@@ -12,7 +12,9 @@ namespace Coffee.RotateMe
 			transform.localRotation = rot * transform.localRotation;
 			Debug.Log("hogehogehoge");
 			Debug.Log("fugafugas");
+			#if !UNITY_EDITOR
 			Debug.Log("fix bugs")
+			#endif
 		}
 	}
 }

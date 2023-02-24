@@ -55,13 +55,13 @@ jobs:
           echo "modules=${MODULES}" >> $GITHUB_OUTPUT
 
 
-          echo "### Commit Summary" >> $GITHUB_STEP_SUMMARY
-          echo "- ${{ github.event.head_commit.url }}" >> $GITHUB_STEP_SUMMARY
-          echo "- ${{ github.event.head_commit.message }}" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Test Summary" >> $GITHUB_STEP_SUMMARY
-          echo "- Versions: ${VERSIONS}" >> $GITHUB_STEP_SUMMARY
-          echo "- Modules: ${MODULES}" >> $GITHUB_STEP_SUMMARY
+  # echo "### Commit Summary" >> $GITHUB_STEP_SUMMARY
+  # echo "- ${{ github.event.head_commit.url }}" >> $GITHUB_STEP_SUMMARY
+  # echo "- ${{ github.event.head_commit.message }}" >> $GITHUB_STEP_SUMMARY
+  # echo "" >> $GITHUB_STEP_SUMMARY
+  # echo "### Test Summary" >> $GITHUB_STEP_SUMMARY
+  # echo "- Versions: ${VERSIONS}" >> $GITHUB_STEP_SUMMARY
+  # echo "- Modules: ${MODULES}" >> $GITHUB_STEP_SUMMARY
 
   # unity-activate:
   #   if: ${{ failure() }}
@@ -114,26 +114,8 @@ jobs:
           projectPath: .
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-
-      - uses: actions/upload-artifact@v3
-        with:
-          path: artifacts
-
-      # - name: Dump job context
-      #   env:
-      #     JOB_CONTEXT: ${{ toJson(job) }}
-      #   run: echo "$JOB_CONTEXT"
         
-      # - run: |
-      #     echo "github.run_id=${{ github.run_id }}"
-      #     # gh run view ${{ github.run_id }} --json 'jobs'
-
-      #     # Find Job Id
-      #     JOB_ID=`gh run view ${{ github.run_id }} --json 'jobs' --jq '.jobs[]|select(.name == "test (${{ matrix.version }}, ${{ matrix.module }})")|.databaseId'`
-      #     gh run view --log --job=${JOB_ID} | grep 'Run tests' | cut -f3- | cut -d " " -f2-
-
-      #     # gh run view ${{ github.run_id }}
-      #     # ls -al
-      #     # cat ~/.config/unity3d/Editor.log
-      #   env:
-      #     GH_TOKEN: ${{ github.token }}
+      - if: failure()
+        run: |
+          echo "### Compile Errors" >> $GITHUB_STEP_SUMMARY
+          cat artifacts/COMBINE_RESULTS.log | grep 'error CS' >> $GITHUB_STEP_SUMMARY
