@@ -51,4 +51,4 @@ jobs:
       # Checkout sandbox project
       - run: |
           echo ${{ matrix.version }}
-          echo ${{ secret.licence }}
+          echo ${{ secrets.licence }}
