@@ -7,7 +7,7 @@ env:
   BETA: false
 
   # MINIMUM_VERSION: The minimum version of Unity.
-  MINIMUM_VERSION: 2022.3
+  MINIMUM_VERSION: 2022.2
 
   # MODULES: Included specific modules of Unity. base|windows-mono|mac-mono|linux-il2cpp|webgl|android|ios
   MODULES: |
@@ -17,7 +17,6 @@ env:
   # ADDITIONAL_VERSIONS: Included specific versions of Unity.
   ADDITIONAL_VERSIONS: |
     2020.3.10f1
-    2020.3.20f1
 
 on:
   push:
