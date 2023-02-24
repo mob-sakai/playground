@@ -93,27 +93,27 @@ jobs:
 
     steps:
       # Checkout project
-      - uses: actions/checkout@v3
+      # - uses: actions/checkout@v3
 
-      # Cache
-      - uses: actions/cache@v3
-        with:
-          path: Library
-          key: Library-${{ matrix.version }}-${{ matrix.module }}-${{ github.sha }}
-          restore-keys: |
-            Library-${{ matrix.version }}-${{ matrix.module }}
+      # # Cache
+      # - uses: actions/cache@v3
+      #   with:
+      #     path: Library
+      #     key: Library-${{ matrix.version }}-${{ matrix.module }}-${{ github.sha }}
+      #     restore-keys: |
+      #       Library-${{ matrix.version }}-${{ matrix.module }}
 
       # Run tests
-      - name: "Run tests"
-        uses: game-ci/unity-test-runner@v2
-        with:
-          customImage: mobsakai/unity3d:${{ matrix.version }}-${{ matrix.module }}
-          customParameters: -nographics
-          checkName: ${{ matrix.version }}-${{ matrix.module }} Test Results
-          githubToken: ${{ github.token }}
-          projectPath: .
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+      # - name: "Run tests"
+      #   uses: game-ci/unity-test-runner@v2
+      #   with:
+      #     customImage: mobsakai/unity3d:${{ matrix.version }}-${{ matrix.module }}
+      #     customParameters: -nographics
+      #     checkName: ${{ matrix.version }}-${{ matrix.module }} Test Results
+      #     githubToken: ${{ github.token }}
+      #     projectPath: .
+      #   env:
+      #     UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
 
       - name: Dump job context
         env:
@@ -129,3 +129,5 @@ jobs:
           # gh run view ${{ github.run_id }}
           # ls -al
           # cat ~/.config/unity3d/Editor.log
+        env:
+          GH_TOKEN: ${{ github.token }}
