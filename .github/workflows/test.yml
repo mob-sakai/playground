@@ -46,7 +46,7 @@ jobs:
           echo "==== Target Unity Versions ===="
           ${BETA} && OPT="--all"
           VERSIONS=`npx unity-changeset list --versions --latest-patch --min ${MINIMUM_VERSION} --json ${OPT}`
-          ADDITIONAL_VERSIONS=`echo "${ADDITIONAL_VERSIONS}"" | jq -R | jq -sc`
+          ADDITIONAL_VERSIONS=`echo "${ADDITIONAL_VERSIONS}" | jq -R | jq -sc`
           VERSIONS=`echo "[$VERSIONS, $ADDITIONAL_VERSIONS]" | jq -c 'flatten|map(select(length > 0))|sort|unique'`
           echo "${VERSIONS}"
           echo "versions=${VERSIONS}" >> $GITHUB_OUTPUT
