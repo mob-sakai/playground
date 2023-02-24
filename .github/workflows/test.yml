@@ -103,19 +103,38 @@ jobs:
           restore-keys: |
             Library-${{ matrix.version }}-${{ matrix.module }}
 
+      # Build tests
+      - uses: game-ci/unity-builder@v2
+        with:
+          customImage: mobsakai/unity3d:${{ matrix.version }}-${{ matrix.module }}
+          customParameters: -nographics -BuildScriptsOnly
+          targetPlatform: StandaloneLinux64
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+
+      - if: failure()
+        run: |
+          ls artifacts
+
       # Run tests
       - name: "Run tests"
         uses: game-ci/unity-test-runner@v2
         with:
           customImage: mobsakai/unity3d:${{ matrix.version }}-${{ matrix.module }}
           customParameters: -nographics
-          checkName: ${{ matrix.version }}-${{ matrix.module }} Test Results
-          githubToken: ${{ github.token }}
-          projectPath: .
+          # checkName: ${{ matrix.version }}-${{ matrix.module }} Test Results
+          # githubToken: ${{ github.token }}
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         
       - if: failure()
         run: |
+          ls artifacts
           echo "### Compile Errors" >> $GITHUB_STEP_SUMMARY
           cat artifacts/COMBINE_RESULTS.log | grep 'error CS' >> $GITHUB_STEP_SUMMARY
+
+      # Upload artifact (Unity_v20XX.X.XXXX.alf)
+      - uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          path: artifacts
