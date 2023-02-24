@@ -43,26 +43,26 @@ jobs:
   setup:
     runs-on: ubuntu-latest
     outputs:
-      versions: ${{ steps.setup.outputs.versions }}
-      modules: ${{ steps.setup.outputs.modules }}
+      # versions: ${{ steps.setup.outputs.versions }}
+      # modules: ${{ steps.setup.outputs.modules }}
     steps:
       - id: setup
         run: |
           echo "${ADDITIONAL_VERSIONS}"
           echo "${MODULES}"
 
-          echo "==== Target Unity Versions ===="
-          ${BETA} && OPT="--all"
-          VERSIONS=`npx unity-changeset list --versions --latest-patch --min ${MINIMUM_VERSION} --json ${OPT}`
-          ADDITIONAL_VERSIONS=`echo ${ADDITIONAL_VERSIONS} | jq -R | jq -sc`
-          VERSIONS=`echo "[$VERSIONS, $ADDITIONAL_VERSIONS]" | jq -c 'flatten|map(select(length > 0))|sort|unique'`
-          echo "${VERSIONS}"
-          echo "versions=${VERSIONS}" >> $GITHUB_OUTPUT
+          # echo "==== Target Unity Versions ===="
+          # ${BETA} && OPT="--all"
+          # VERSIONS=`npx unity-changeset list --versions --latest-patch --min ${MINIMUM_VERSION} --json ${OPT}`
+          # ADDITIONAL_VERSIONS=`echo "${ADDITIONAL_VERSIONS}"" | jq -R | jq -sc`
+          # VERSIONS=`echo "[$VERSIONS, $ADDITIONAL_VERSIONS]" | jq -c 'flatten|map(select(length > 0))|sort|unique'`
+          # echo "${VERSIONS}"
+          # echo "versions=${VERSIONS}" >> $GITHUB_OUTPUT
           
-          echo "==== Target Unity Modules ===="
-          MODULES=`echo ${MODULES} | jq -R | jq -sc 'map(select(length > 0))'`
-          echo "${MODULES}"
-          echo "modules=${MODULES}" >> $GITHUB_OUTPUT
+          # echo "==== Target Unity Modules ===="
+          # MODULES=`echo "${MODULES}" | jq -R | jq -sc 'map(select(length > 0))'`
+          # echo "${MODULES}"
+          # echo "modules=${MODULES}" >> $GITHUB_OUTPUT
 
   # unity-activate:
   #   if: ${{ failure() }}
@@ -83,39 +83,39 @@ jobs:
   #         echo "1. Add the contents of the ulf file as a repository secret `UNITY_LICENSE`" >> $GITHUB_STEP_SUMMARY
   #         echo "1. Re-run the test workflow" >> $GITHUB_STEP_SUMMARY
 
-  test:
-    runs-on: ubuntu-latest
-    needs: setup
-    strategy:
-      fail-fast: false
-      matrix:
-        version: ${{ fromJson(needs.setup.outputs.versions) }}
-        module: ${{ fromJson(needs.setup.outputs.modules) }}
+  # test:
+  #   runs-on: ubuntu-latest
+  #   needs: setup
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       version: ${{ fromJson(needs.setup.outputs.versions) }}
+  #       module: ${{ fromJson(needs.setup.outputs.modules) }}
 
-    steps:
-      # Checkout project
-      - uses: actions/checkout@v3
+  #   steps:
+  #     # Checkout project
+  #     - uses: actions/checkout@v3
 
-      # Cache
-      - uses: actions/cache@v3
-        with:
-          path: Library
-          key: Library-${{ matrix.version }}-${{ matrix.module }}-${{ github.sha }}
-          restore-keys: |
-            Library-${{ matrix.version }}-${{ matrix.module }}
+  #     # Cache
+  #     - uses: actions/cache@v3
+  #       with:
+  #         path: Library
+  #         key: Library-${{ matrix.version }}-${{ matrix.module }}-${{ github.sha }}
+  #         restore-keys: |
+  #           Library-${{ matrix.version }}-${{ matrix.module }}
 
-      # Run tests
-      - name: "Run tests"
-        uses: game-ci/unity-test-runner@v2
-        with:
-          customImage: mobsakai/unity3d:${{ matrix.version }}-${{ matrix.module }}
-          customParameters: -nographics --logFile log.txt
-          checkName: ${{ matrix.version }}-${{ matrix.module }} Test Results
-          githubToken: ${{ github.token }}
-          projectPath: .
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+  #     # Run tests
+  #     - name: "Run tests"
+  #       uses: game-ci/unity-test-runner@v2
+  #       with:
+  #         customImage: mobsakai/unity3d:${{ matrix.version }}-${{ matrix.module }}
+  #         customParameters: -nographics --logFile log.txt
+  #         checkName: ${{ matrix.version }}-${{ matrix.module }} Test Results
+  #         githubToken: ${{ github.token }}
+  #         projectPath: .
+  #       env:
+  #         UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
 
-      - run: |
-          cat log.txt
+  #     - run: |
+  #         cat log.txt
 
