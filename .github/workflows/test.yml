@@ -114,7 +114,7 @@ jobs:
 
       - if: failure()
         run: |
-          ls artifacts
+          ls -al
 
       # Run tests
       - name: "Run tests"
