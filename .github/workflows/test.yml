@@ -54,6 +54,15 @@ jobs:
           echo "${MODULES}"
           echo "modules=${MODULES}" >> $GITHUB_OUTPUT
 
+
+          echo "### Commit Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- ${{ github.event.head_commit.url }}" >> $GITHUB_STEP_SUMMARY
+          echo "- ${{ github.event.head_commit.message }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Test Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- Versions: ${VERSIONS}" >> $GITHUB_STEP_SUMMARY
+          echo "- Modules: ${MODULES}" >> $GITHUB_STEP_SUMMARY
+
   # unity-activate:
   #   if: ${{ failure() }}
   #   runs-on: ubuntu-latest
