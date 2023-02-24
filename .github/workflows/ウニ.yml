@@ -1,0 +1,61 @@
+# This is a basic workflow to help you get started with Actions
+
+name: ウニ
+
+env:
+  # BETA: Included beta versions of Unity.
+  BETA: true
+  # MINIMUM_VERSION: The minimum version of Unity.
+  MINIMUM_VERSION: 2020.1
+  # MODULES: Included specific modules of Unity. base|windows-mono|mac-mono|linux-il2cpp|webgl|android|ios
+  MODULES: |
+    base
+  # ADDITIONAL_VERSIONS: Included specific versions of Unity.
+  ADDITIONAL_VERSIONS: |
+    2020.3.10f1
+    2020.3.20f1
+    2020.3.30f1
+    2020.3.40f1
+    2021.3.10f1
+    
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  hogehoge:
+    if: ${{ secrets.UNITY_LICENSE2 == '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - id: setup
+        run: |
+          echo "failed!!"
+
+  setup:
+    if: ${{ secrets.UNITY_LICENSE2 != '' }}
+    runs-on: ubuntu-latest
+    outputs:
+      versions: ${{ steps.setup.outputs.versions }}
+      modules: ${{ steps.setup.outputs.modules }}
+    steps:
+      - id: setup
+        run: |
+          echo "==== Target Unity Versions ===="
+          [ ${BETA} ] && OPT="--all"
+          VERSIONS=`npx unity-changeset list --versions --latest-patch --min ${MINIMUM_VERSION} --json ${OPT}`
+          ADDITIONAL_VERSIONS=`echo ${ADDITIONAL_VERSIONS} | jq -R | jq -sc 'map(select(length > 0))'`
+          VERSIONS=`echo "[$VERSIONS, $ADDITIONAL_VERSIONS]" | jq -c 'flatten|sort|unique'`
+          echo "${VERSIONS}"
+          echo "versions=${VERSIONS}" >> $GITHUB_OUTPUT
+          
+          echo "==== Target Unity Modules ===="
+          MODULES=`echo $modules | jq -R | jq -sc 'map(select(length > 0))'`
+          echo "${MODULES}"
+          echo "modules=${MODULES}" >> $GITHUB_OUTPUT
