@@ -33,7 +33,7 @@ jobs:
           fi
           
           if [ -n "${{ inputs.versions }}" ]; then
-            ADD_VERSIONS=`echo $versions | jq -R | jq -sc`
+            ADD_VERSIONS=`echo $versions | jq -R | jq -sc 'map(select(length > 0))'`
             VERSIONS=`echo "[$VERSIONS, $ADD_VERSIONS]" | jq -c 'flatten|sort|unique'`
           fi
           echo "==== Target Unity Versions ===="
