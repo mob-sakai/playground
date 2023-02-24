@@ -96,24 +96,24 @@ jobs:
       - uses: actions/checkout@v3
 
       # # Cache
-      # - uses: actions/cache@v3
-      #   with:
-      #     path: Library
-      #     key: Library-${{ matrix.version }}-${{ matrix.module }}-${{ github.sha }}
-      #     restore-keys: |
-      #       Library-${{ matrix.version }}-${{ matrix.module }}
+      - uses: actions/cache@v3
+        with:
+          path: Library
+          key: Library-${{ matrix.version }}-${{ matrix.module }}-${{ github.sha }}
+          restore-keys: |
+            Library-${{ matrix.version }}-${{ matrix.module }}
 
       # Run tests
-      # - name: "Run tests"
-      #   uses: game-ci/unity-test-runner@v2
-      #   with:
-      #     customImage: mobsakai/unity3d:${{ matrix.version }}-${{ matrix.module }}
-      #     customParameters: -nographics
-      #     checkName: ${{ matrix.version }}-${{ matrix.module }} Test Results
-      #     githubToken: ${{ github.token }}
-      #     projectPath: .
-      #   env:
-      #     UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+      - name: "Run tests"
+        uses: game-ci/unity-test-runner@v2
+        with:
+          customImage: mobsakai/unity3d:${{ matrix.version }}-${{ matrix.module }}
+          customParameters: -nographics
+          checkName: ${{ matrix.version }}-${{ matrix.module }} Test Results
+          githubToken: ${{ github.token }}
+          projectPath: .
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
 
       - name: Dump job context
         env:
@@ -122,9 +122,11 @@ jobs:
         
       - run: |
           echo "github.run_id=${{ github.run_id }}"
-          gh run view ${{ github.run_id }} --json 'jobs'
+          # gh run view ${{ github.run_id }} --json 'jobs'
 
-          # gh run view 4264193175 --json 'jobs' --jq '.jobs[]|select(.name == "build")|.databaseId'
+          # Find Job Id
+          JOB_ID=`gh run view ${{ github.run_id }} --json 'jobs' --jq '.jobs[]|select(.name == "test (${{ matrix.version }}, ${{ matrix.module }})")|.databaseId'`
+          gh run view --log --job=${JOB_ID} | grep 'Run tests' | cut -f3- | cut -d " " -f2-
 
           # gh run view ${{ github.run_id }}
           # ls -al
