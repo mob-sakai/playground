@@ -42,7 +42,7 @@ jobs:
           echo "versions=${VERSIONS}" >> $GITHUB_OUTPUT
           
           echo "==== Target Unity Modules ===="
-          MODULES=`echo $modules | jq -R | jq -sc 'map(select(length > 0))'`
+          MODULES=`echo ${MODULES} | jq -R | jq -sc 'map(select(length > 0))'`
           echo "${MODULES}"
           echo "modules=${MODULES}" >> $GITHUB_OUTPUT
 
@@ -57,7 +57,6 @@ jobs:
       # Upload artifact (Unity_v20XX.X.XXXX.alf)
       - uses: actions/upload-artifact@v3
         with:
-          name: ${{ steps.alf.outputs.filePath }}
           path: ${{ steps.alf.outputs.filePath }}
       - run: |
           echo "### Next Steps" >> $GITHUB_STEP_SUMMARY
