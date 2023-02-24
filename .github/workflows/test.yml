@@ -38,8 +38,8 @@ jobs:
   setup:
     runs-on: ubuntu-latest
     outputs:
-      # versions: ${{ steps.setup.outputs.versions }}
-      # modules: ${{ steps.setup.outputs.modules }}
+      versions: ${{ steps.setup.outputs.versions }}
+      modules: ${{ steps.setup.outputs.modules }}
     steps:
       - id: setup
         run: |
@@ -50,7 +50,7 @@ jobs:
           VERSIONS=`echo "[$VERSIONS, $ADDITIONAL_VERSIONS]" | jq -c 'flatten|map(select(length > 0))|sort|unique'`
           echo "${VERSIONS}"
           echo "versions=${VERSIONS}" >> $GITHUB_OUTPUT
-          
+
           echo "==== Target Unity Modules ===="
           MODULES=`echo "${MODULES}" | jq -R | jq -sc 'map(select(length > 0))'`
           echo "${MODULES}"
@@ -110,4 +110,3 @@ jobs:
 
       - run: |
           cat log.txt
-
