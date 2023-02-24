@@ -31,7 +31,7 @@ jobs:
       - id: setup
         run: |
           echo "==== Check Unity Licence ===="
-          [ -z "${{ secrets.UNITY_LICENSE_ }}" ] && exit 1
+          [ -z "${{ secrets.UNITY_LICENSE }}" ] && exit 1
 
           echo "==== Target Unity Versions ===="
           [ ${BETA} ] && OPT="--all"
