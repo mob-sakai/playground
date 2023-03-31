@@ -25,16 +25,20 @@ jobs:
       - id: setup
         run: |
           if [ "${{ github.event_name }}" = "issues" ]; then
-            echo 'versions=[ "${{ github.event.issue.title }}" ]' | tee >> $GITHUB_OUTPUT
-            echo 'modules=[ "base", "linux-il2cpp", "windows-mono", "mac-mono", "ios", "android", "webgl" ]' | tee >> $GITHUB_OUTPUT
+            echo 'versions=[ "${{ github.event.issue.title }}" ]' | tee $GITHUB_OUTPUT
+            echo 'modules=[ "base", "linux-il2cpp", "windows-mono", "mac-mono", "ios", "android", "webgl" ]' | tee $GITHUB_OUTPUT
           else
-            echo "versions=${{ github.event.inputs.versions }}" | tee >> $GITHUB_OUTPUT
-            echo "modules=${{ github.event.inputs.modules }}" | tee >> $GITHUB_OUTPUT
+            echo "versions=${{ github.event.inputs.versions }}" | tee $GITHUB_OUTPUT
+            echo "modules=${{ github.event.inputs.modules }}" | tee $GITHUB_OUTPUT
           fi
 
-  build:
+  check:
     needs: setup
     runs-on: ubuntu-latest
+    outputs:
+      skip: ${{ steps.check.outputs.skip }}
+      version: ${{ matrix.version }}
+      module: ${{ matrix.module }}
     strategy:
       matrix:
         version: ${{ fromJson(needs.setup.outputs.versions) }}
@@ -43,19 +47,30 @@ jobs:
 
       - uses: actions/checkout@v3
 
-      - run: cat .env | sed 's/=\" *$/<<EOD/g' | sed 's/^\"/EOD/g' | grep '^[^# ]' >> $GITHUB_ENV
+      - run: cat .env | sed 's/=\" *$/<<EOD/g' | sed 's/^\"/EOD/g' | grep '^[^# ]' | tee $GITHUB_ENV
 
-      - run: |
-          echo "======== Target tag ========"
-          echo "${{ matrix.version }}-${{ matrix.module }}"
-
-          echo "======== Excluded image tags ========"
-          echo -n "${{ env.EXCLUDE_IMAGE_TAGS }}" | grep '.' | tee .excludedTags
-
+      - id: check
+        run: |
+          echo -n "${{ env.EXCLUDE_IMAGE_TAGS }}" | grep '.' | .excludedTags
           if [ -n "$(echo ${{ matrix.version }}-${{ matrix.module }} | grep -f .excludedTags)" ]; then
-            echo "skip=true" | tee >> $GITHUB_ENV
+            echo "skip=true" >> $GITHUB_OUTPUT
           fi
 
       - if: env.skip != 'true'
         run: |
+          echo "Building ${{ matrix.version }} for ${{ matrix.module }}"
+
+  build:
+    if: ${{ !needs.check.outputs.skip }}
+    needs: check
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version: 
+          - ${{ fromJson(needs.check.outputs.version) }}
+        module:
+          - ${{ fromJson(needs.check.outputs.module) }}
+    steps:
+
+      - run: |
           echo "Building ${{ matrix.version }} for ${{ matrix.module }}"
