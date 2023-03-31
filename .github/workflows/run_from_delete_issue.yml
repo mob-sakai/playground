@@ -52,7 +52,7 @@ jobs:
           echo "======== Excluded image tags ========"
           echo -n "${{ env.EXCLUDE_IMAGE_TAGS }}" | grep '.' | tee .excludedTags
 
-          if [ -n "$(echo ${{ matrix.version }}-${{ matrix.module }} | grep -f .excludedTags || :)" ]; then
+          if [ -n "$(echo ${{ matrix.version }}-${{ matrix.module }} | grep -f .excludedTags)" ]; then
             echo "skip=true" | tee >> $GITHUB_ENV
           fi
 
