@@ -29,7 +29,7 @@ jobs:
             echo 'modules=[ "base", "linux-il2cpp", "windows-mono", "mac-mono", "ios", "android", "webgl" ]' | tee >> $GITHUB_OUTPUT
           else
             echo "versions=${{ github.event.inputs.versions }}" | tee >> $GITHUB_OUTPUT
-            echo "versions=${{ github.event.inputs.modules }}" | tee >> $GITHUB_OUTPUT
+            echo "modules=${{ github.event.inputs.modules }}" | tee >> $GITHUB_OUTPUT
           fi
 
   build:
@@ -47,12 +47,12 @@ jobs:
 
       - run: |
           echo "======== Target tag ========"
-          echo "${version}-${{ matrix.module }}"
+          echo "${{ matrix.version }}-${{ matrix.module }}"
 
           echo "======== Excluded image tags ========"
           echo -n "${{ env.EXCLUDE_IMAGE_TAGS }}" | grep '.' | tee .excludedTags
 
-          [ -n "$(echo ${version}-${{ matrix.module }} | grep -f .excludedTags)" ] && echo "skip=true" | tee >> $GITHUB_ENV
+          [ -n "$(echo ${{ matrix.version }}-${{ matrix.module }} | grep -f .excludedTags)" ] && echo "skip=true" | tee >> $GITHUB_ENV
 
       - if: env.skip != 'true'
         run: |
