@@ -31,6 +31,7 @@ jobs:
       - id: setup
         run: |
           if [ "${{ github.event_name }}" = "issues" ]; then
+            echo -n "${{ env.EXCLUDE_IMAGE_TAGS }}" | grep '.' | tee .excludedTags
             if [ -z "$(echo '${{ github.event.issue.title }}' | grep -f .excludedTags)" ]; then
               echo 'versions=[ "${{ github.event.issue.title }}" ]' | tee >> $GITHUB_OUTPUT
               echo 'modules=[ "base", "linux-il2cpp", "windows-mono", "mac-mono", "ios", "android", "webgl" ]' | tee >> $GITHUB_OUTPUT
