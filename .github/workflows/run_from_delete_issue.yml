@@ -1,0 +1,33 @@
+name: run_from_delete_issue
+
+on:
+  workflow_dispatch:
+    inputs:
+      versions:
+        description: "Unity versions array to build"
+        required: true
+        default: '[ "2018.4.30f1" ]'
+      modules:
+        description: "Unity modules array to build.\n(base|linux-il2cpp|windows-mono|mac-mono|ios|android|webgl)"
+        required: true
+        default: '[ "base", "linux-il2cpp", "windows-mono", "mac-mono", "ios", "android", "webgl" ]'
+  issues:
+    types: [opened, edited, deleted]
+
+jobs:
+  setup:
+    if: github.event_name != 'issues' || startsWith(github.event.issue.body, '/build-editor')
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+
+          echo "versions=${{ github.event.inputs.versions }}"
+          echo "versions=${{ github.event.inputs.modules }}"
+
+          if [ "${{ github.event_name }}" = "issues" ]; then
+            echo 'versions=[ "${{ github.event.issue.title }}" ]'
+            echo 'modules=[ "base", "linux-il2cpp", "windows-mono", "mac-mono", "ios", "android", "webgl" ]'
+          # else
+          #   echo "versions=${{ github.event.inputs.versions }}"
+          #   echo "versions=${{ github.event.inputs.modules }}"
+          fi
