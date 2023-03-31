@@ -12,16 +12,23 @@ on:
         required: true
         default: '[ \"base\", \"linux-il2cpp\", \"windows-mono\", \"mac-mono\", \"ios\", \"android\", \"webgl\" ]'
   issues:
-    types: [opened, edited, deleted]
+    types: [opened]
 
 jobs:
   setup:
-    if: github.event_name != 'issues' || github.event.issue.body == '/build-editor'
+    if: github.event_name != 'issues' || (github.event.issue.body == '/build-editor' && github.event.issue.user.login == 'mob-sakai')
     runs-on: ubuntu-latest
     outputs:
       versions: ${{ steps.setup.outputs.versions }}
       modules: ${{ steps.setup.outputs.modules }}
     steps:
+
+      - if: github.event_name == 'issues'
+        uses: vtcaregorodtcev/delete-issue@main
+        with:
+          github_token: ${{ github.token }}
+          issue_node_id: ${{ github.event.issue.node_id }}
+
       - if: github.event_name == 'issues'
         uses: actions/checkout@v3
         
