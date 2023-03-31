@@ -67,9 +67,9 @@ jobs:
     strategy:
       matrix:
         version: 
-          - ${{ fromJson(needs.check.outputs.version) }}
+          - ${{ needs.check.outputs.version }}
         module:
-          - ${{ fromJson(needs.check.outputs.module) }}
+          - ${{ needs.check.outputs.module }}
     steps:
 
       - run: |
