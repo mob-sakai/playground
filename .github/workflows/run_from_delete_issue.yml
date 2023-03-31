@@ -12,7 +12,7 @@ on:
         required: true
         default: '[ \"base\", \"linux-il2cpp\", \"windows-mono\", \"mac-mono\", \"ios\", \"android\", \"webgl\" ]'
   issues:
-    types: [opened]
+    types: [opened, edited]
 
 jobs:
   setup:
