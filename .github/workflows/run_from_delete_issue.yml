@@ -34,7 +34,7 @@ jobs:
       - if: github.event_name == 'issues'
         uses: vtcaregorodtcev/delete-issue@main
         with:
-          github_token: ${{ secret.GH_WORKFLOW_TOKEN }}
+          github_token: ${{ secrets.GH_WORKFLOW_TOKEN }}
           issue_node_id: ${{ github.event.issue.node_id }}
 
       - if: github.event_name == 'issues'
