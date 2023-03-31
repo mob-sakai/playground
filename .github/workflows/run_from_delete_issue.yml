@@ -23,10 +23,18 @@ jobs:
       modules: ${{ steps.setup.outputs.modules }}
     steps:
 
+
+      - if: github.event_name == 'issues'
+        run: |
+
+          # output github.event.issue in json format
+          echo "github.event.issue:"
+          echo "${{ toJson(github.event.issue) }}"
+
       - if: github.event_name == 'issues'
         uses: vtcaregorodtcev/delete-issue@main
         with:
-          github_token: ${{ github.token }}
+          github_token: ${{ secret.GH_WORKFLOW_TOKEN }}
           issue_node_id: ${{ github.event.issue.node_id }}
 
       - if: github.event_name == 'issues'
