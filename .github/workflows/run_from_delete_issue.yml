@@ -1,71 +1,48 @@
-name: run_from_delete_issue
+# name: run_from_create_issue
 
-on:
-  workflow_dispatch:
-    inputs:
-      versions:
-        description: "Unity versions array to build"
-        required: true
-        default: '[ \"2018.4.30f1\" ]'
-      modules:
-        description: "Unity modules array to build.\n(base|linux-il2cpp|windows-mono|mac-mono|ios|android|webgl)"
-        required: true
-        default: '[ \"base\", \"linux-il2cpp\", \"windows-mono\", \"mac-mono\", \"ios\", \"android\", \"webgl\" ]'
-  issues:
-    types: [opened, edited]
+# on:
+#   workflow_dispatch:
+#     inputs:
+#       versions:
+#         description: "Unity versions array to build"
+#         required: true
+#         default: '[ \"2018.4.30f1\" ]'
+#       modules:
+#         description: "Unity modules array to build.\n(base|linux-il2cpp|windows-mono|mac-mono|ios|android|webgl)"
+#         required: true
+#         default: '[ \"base\", \"linux-il2cpp\", \"windows-mono\", \"mac-mono\", \"ios\", \"android\", \"webgl\" ]'
+#   issues:
+#     types: [opened, reopened]
 
-jobs:
-  setup:
-    if: github.event_name != 'issues' || (github.event.issue.body == '/build-editor' && github.event.issue.user.login == 'mob-sakai')
-    runs-on: ubuntu-latest
-    outputs:
-      versions: ${{ steps.setup.outputs.versions }}
-      modules: ${{ steps.setup.outputs.modules }}
-    steps:
+# jobs:
+#   setup:
+#     if: github.event_name != 'issues' || github.event.issue.body == '/build-editor'
+#     runs-on: ubuntu-latest
+#     outputs:
+#       versions: ${{ steps.setup.outputs.versions }}
+#       modules: ${{ steps.setup.outputs.modules }}
+#     steps:
+#       - if: github.event_name == 'issues'
+#         uses: peter-evans/close-issue@v2
+#         with:
+#           comment: Build started
+#       - id: setup
+#         run: |
+#           if [ "${{ github.event_name }}" = "issues" ]; then
+#             echo 'versions=[ "${{ github.event.issue.title }}" ]' | tee >> $GITHUB_OUTPUT
+#             echo 'modules=[ "base", "linux-il2cpp", "windows-mono", "mac-mono", "ios", "android", "webgl" ]' | tee >> $GITHUB_OUTPUT
+#           else
+#             echo "versions=${{ github.event.inputs.versions }}" | tee >> $GITHUB_OUTPUT
+#             echo "modules=${{ github.event.inputs.modules }}" | tee >> $GITHUB_OUTPUT
+#           fi
 
-
-      - if: github.event_name == 'issues'
-        run: |
-
-          # output github.event.issue in json format
-          echo "github.event.issue:"
-          echo "${{ toJson(github.event.issue) }}"
-
-      - if: github.event_name == 'issues'
-        uses: vtcaregorodtcev/delete-issue@main
-        with:
-          github_token: ${{ secrets.GH_WORKFLOW_TOKEN }}
-          issue_node_id: ${{ github.event.issue.node_id }}
-
-      - if: github.event_name == 'issues'
-        uses: actions/checkout@v3
-        
-      - if: github.event_name == 'issues'
-        run: cat .env | sed 's/=\" *$/<<EOD/g' | sed 's/^\"/EOD/g' | grep '^[^# ]' | tee >> $GITHUB_ENV
-
-      - id: setup
-        run: |
-          if [ "${{ github.event_name }}" = "issues" ]; then
-            echo -n "${{ env.EXCLUDE_IMAGE_TAGS }}" | grep '.' | tee .excludedTags
-            if [ -z "$(echo '${{ github.event.issue.title }}' | grep -f .excludedTags)" ]; then
-              echo 'versions=[ "${{ github.event.issue.title }}" ]' | tee >> $GITHUB_OUTPUT
-              echo 'modules=[ "base", "linux-il2cpp", "windows-mono", "mac-mono", "ios", "android", "webgl" ]' | tee >> $GITHUB_OUTPUT
-            else
-              echo 'versions=[]' | tee >> $GITHUB_OUTPUT
-              echo 'modules=[]' | tee >> $GITHUB_OUTPUT
-            fi
-          else
-            echo "versions=${{ github.event.inputs.versions }}" | tee >> $GITHUB_OUTPUT
-            echo "modules=${{ github.event.inputs.modules }}" | tee >> $GITHUB_OUTPUT
-          fi
-
-  build:
-    needs: setup
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        version: ${{ fromJson(needs.setup.outputs.versions) }}
-        module: ${{ fromJson(needs.setup.outputs.modules) }}
-    steps:
-      - run: |
-          echo "Building ${{ matrix.version }} for ${{ matrix.module }}"
+#   build:
+#     needs: setup
+#     runs-on: ubuntu-latest
+#     strategy:
+#       matrix:
+#         version: ${{ fromJson(needs.setup.outputs.versions) }}
+#         module: ${{ fromJson(needs.setup.outputs.modules) }}
+#     steps:
+#       - run: |
+#           echo "Building ${{ matrix.version }} for ${{ matrix.module }}"
