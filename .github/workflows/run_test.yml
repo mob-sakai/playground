@@ -1,0 +1,17 @@
+name: Container
+on: workflow_dispatch
+
+jobs:
+  docker-steps:
+    runs-on: ubuntu-latest
+    container:
+      image: mobsakai/unity3d:2022.3.12f1
+    steps:
+      - run: pwd
+      - name: 🚚 Checkout
+        uses: actions/checkout@v4
+        
+      - run: ls
+      - run: pwd
+      - name: log node version
+        run: node -v
