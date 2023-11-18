@@ -44,37 +44,15 @@ jobs:
         working-directory: to
         shell: bash -xe {0}
         run: |
-          pwd
-          
-          echo "========================================"
-
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-
           git rm -rf --ignore-unmatch .
-
-          echo "========================================"
-
-          ls -la ../from/${{ inputs.path }}
-
-          echo "========================================"
-
           cp -RT ../from/${{ inputs.path }} .
-
-          echo "========================================"
-
-          ls -la .
-
-
-          echo "========================================"
-
-          pwd
-
-          echo "========================================"
-
           git diff
 
-          echo "========================================"
-
+      - name: 📷 Take Snapshot '${{ inputs.path }}' from '${{ inputs.from }}' to '${{ inputs.to }}'
+        working-directory: to
+        shell: bash -xe {0}
+        run: |
+          ls -la
           git commit -am "📷 Snapshot '${{ inputs.path }}' from '${{ inputs.from }}' to '${{ inputs.to }}'"
           # git push origin ${{ inputs.to }}
+  
