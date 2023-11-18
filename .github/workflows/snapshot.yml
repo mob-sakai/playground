@@ -31,13 +31,13 @@ jobs:
       - name: 🚚 Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.from }}
+          ref: ${{ inputs.from }}
           path: from
 
       - name: 🚚 Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.to }}
+          ref: ${{ inputs.to }}
           path: to
 
       - working-directory: to
@@ -47,7 +47,7 @@ jobs:
 
           git rm -rf --ignore-unmatch .
           ls -la ../from/${{ inputs.path }}
-          cp -r ../from/${{ inputs.path }}/* ./
+          cp -r ../from/${{ inputs.path }}/* .
 
           git commit -am "📷 Snapshot '${{ inputs.path }}' from '${{ inputs.from }}' to '${{ inputs.to }}'"
-          git push origin ${{ inputs.to }}
+          # git push origin ${{ inputs.to }}
