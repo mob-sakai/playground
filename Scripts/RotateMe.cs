@@ -14,6 +14,7 @@ namespace Coffee.RotateMe
 			Debug.Log("fugafugas");
 			#if !UNITY_EDITOR
 			Debug.Log("fix bugs")
+			Debug.Log("fix bugs 1")
 			#endif
 		}
 	}
