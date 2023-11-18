@@ -54,16 +54,18 @@ jobs:
 
           echo "========================================"
 
-          cp -r ${GITHUB_WORKSPACE}/from/${{ inputs.path }}/* ${GITHUB_WORKSPACE}/to
+          cp -r ${GITHUB_WORKSPACE}/from/${{ inputs.path }}/* .
 
           echo "========================================"
 
-          ls -la ${GITHUB_WORKSPACE}/to
+          ls -la .
 
 
           echo "========================================"
-
 
           git diff
+
+          echo "========================================"
+
           git commit -am "📷 Snapshot '${{ inputs.path }}' from '${{ inputs.from }}' to '${{ inputs.to }}'"
           # git push origin ${{ inputs.to }}
