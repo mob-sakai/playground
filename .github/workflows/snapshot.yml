@@ -46,8 +46,8 @@ jobs:
           git config --local user.name "github-actions[bot]"
 
           git rm -rf --ignore-unmatch .
-          ls -la from/${{ inputs.path }}
-          cp -r from/${{ inputs.path }}/* ./
+          ls -la ../from/${{ inputs.path }}
+          cp -r ../from/${{ inputs.path }}/* ./
 
           git commit -am "📷 Snapshot '${{ inputs.path }}' from '${{ inputs.from }}' to '${{ inputs.to }}'"
           git push origin ${{ inputs.to }}
