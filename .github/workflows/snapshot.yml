@@ -55,15 +55,15 @@ jobs:
 
           echo "========================================"
 
-          ls -la ${GITHUB_WORKSPACE}/from/${{ inputs.path }}
+          ls -la ../from/${{ inputs.path }}
 
           echo "========================================"
 
-          cp -r ${GITHUB_WORKSPACE}/from/${{ inputs.path }}/* ${GITHUB_WORKSPACE}/to
+          cp -r ../from/${{ inputs.path }}/. ./
 
           echo "========================================"
 
-          ls -la ${GITHUB_WORKSPACE}/to
+          ls -la .
 
 
           echo "========================================"
