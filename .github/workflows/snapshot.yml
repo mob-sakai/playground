@@ -40,14 +40,28 @@ jobs:
           ref: ${{ inputs.to }}
           path: to
 
-      - working-directory: to
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
+      - run: |
+          # git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          # git config --local user.name "github-actions[bot]"
 
           git rm -rf --ignore-unmatch .
-          ls -la ../from/${{ inputs.path }}
-          cp -r ../from/${{ inputs.path }}/* .
 
-          git commit -am "📷 Snapshot '${{ inputs.path }}' from '${{ inputs.from }}' to '${{ inputs.to }}'"
+          echo "========================================"
+
+          ls -la ${GITHUB_WORKSPACE}/from/${{ inputs.path }}
+
+          echo "========================================"
+
+          cp -r ${GITHUB_WORKSPACE}/from/${{ inputs.path }}/* ${GITHUB_WORKSPACE}/to
+
+          echo "========================================"
+
+          ls -la ${GITHUB_WORKSPACE}/to
+
+
+          # git commit -am "📷 Snapshot '${{ inputs.path }}' from '${{ inputs.from }}' to '${{ inputs.to }}'"
           # git push origin ${{ inputs.to }}
+
+      - working-directory: to
+        run: |
+          git diff
