@@ -1,0 +1,11 @@
+name: hogehoge
+
+on:
+  push:
+
+jobs:
+  hogehoge:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo ${{ github.ref_name }}
