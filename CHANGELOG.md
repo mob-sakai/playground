@@ -1,12 +1,7 @@
-# 1.0.0 (2023-11-20)
-
-
-### Bug Fixes
-
-* fix bugs 1 ([2583431](https://github.com/mob-sakai/playground/commit/2583431d42da57f1aeb76265042c1b9acb221e67))
+# [2.1.0](https://github.com/mob-sakai/playground/compare/v2.0.0...v2.1.0) (2023-11-20)
 
 
 ### Features
 
-* first commit ([5bdf82a](https://github.com/mob-sakai/playground/commit/5bdf82a662bfe137b393d68a97931debf00e06cf))
-* fugafuga ([eaf7aea](https://github.com/mob-sakai/playground/commit/eaf7aeab54dd3ba246c5401aee391abe247e9562))
+* build wf ([670edc3](https://github.com/mob-sakai/playground/commit/670edc3c62e0136aa702b14555adcb900e3f6bca))
+* fix ([3489155](https://github.com/mob-sakai/playground/commit/34891557e4df5689f882e30d736bb6bb17c5e8d7))
