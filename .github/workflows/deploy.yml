@@ -84,5 +84,5 @@ jobs:
       - name: 📦 Upload '_site'
         uses: actions/upload-pages-artifact@v2
 
-      # - name: 🚀 Deploy To GitHub Pages
-      #   uses: actions/deploy-pages@v2
+      - name: 🚀 Deploy To GitHub Pages
+        uses: actions/deploy-pages@v2

@@ -33,8 +33,41 @@ on:
         type: string
 
 jobs:
+  cache:
+    name: 🎮 Build Demo Player
+    runs-on: ubuntu-latest
+    outputs:
+      cached: steps.find.outputs.cached
+    permissions:
+      contents: read
+    steps:
+      - name: 🚚 Checkout
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ inputs.repository }}
+          ref: ${{ inputs.ref }}
+
+      - name: ⚙️Find demo player
+        id: find
+        run: |
+          demo=`jq -r '.demo' ./Documentation/metadata.json`
+          if [ "${demo}" != "null" ]; then
+            curl -L "${demo}" -o demo.zip
+            unzip demo.zip -d Demo
+            echo "cached=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 📦 Upload Demo Player
+        if: steps.find.outputs.cached == 'true'
+        uses: actions/upload-artifact@v3
+        with:
+          name: Demo
+          path: Demo
+
   build:
     name: 🎮 Build Demo Player
+    needs: cache
+    if: needs.cache.outputs.cached != 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
