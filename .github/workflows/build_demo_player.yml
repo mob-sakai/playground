@@ -33,11 +33,9 @@ on:
         type: string
 
 jobs:
-  cache:
+  build:
     name: 🎮 Build Demo Player
     runs-on: ubuntu-latest
-    outputs:
-      cached: steps.find.outputs.cached
     permissions:
       contents: read
     steps:
@@ -47,38 +45,26 @@ jobs:
           repository: ${{ inputs.repository }}
           ref: ${{ inputs.ref }}
 
-      - name: ⚙️Find demo player
+      - name: 📥 Find demo player
         id: find
         run: |
           demo=`jq -r '.demo' ./Documentation/metadata.json`
-          [ "${demo}" != "null" ] && exit 0
+          if [ "${demo}" != "null" ]; then
+            echo "cached=false" | tee -a $GITHUB_OUTPUT $GITHUB_STEP_SUMMARY
+            exit 0
+          fi
 
+          mkdir -p build/WebGL/WebGL
           curl -L "${demo}" -o demo.zip
-          unzip demo.zip -d Demo
-          echo "cached='true'" | tee -a $GITHUB_OUTPUT $GITHUB_STEP_SUMMARY
+          unzip demo.zip -d build/WebGL/WebGL
+          echo "cached=true" | tee -a $GITHUB_OUTPUT $GITHUB_STEP_SUMMARY
 
-      - name: 📦 Upload Demo Player
-        if: steps.find.outputs.cached == 'true'
-        uses: actions/upload-artifact@v3
-        with:
-          name: Demo
-          path: Demo
 
-  build:
-    name: 🎮 Build Demo Player
-    needs: cache
-    if: needs.cache.outputs.cached != 'true'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - name: 🚚 Checkout
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ inputs.repository }}
-          ref: ${{ inputs.ref }}
+          echo "======="
+          ls build/WebGL/WebGL
 
       - name: 📥 Cache Library
+        if: steps.find.outputs.cached == 'false'
         uses: actions/cache@v3
         with:
           path: Library
@@ -91,6 +77,7 @@ jobs:
             Library-
 
       - name: 🛠️ Build Demo Player
+        if: steps.find.outputs.cached == 'false'
         uses: game-ci/unity-builder@v3
         timeout-minutes: 30
         env:
