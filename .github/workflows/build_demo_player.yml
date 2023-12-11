@@ -49,7 +49,7 @@ jobs:
         id: find
         run: |
           demo=`jq -r '.demo' ./Documentation/metadata.json`
-          if [ "${demo}" != "null" ]; then
+          if [ "${demo}" == "null" ]; then
             echo "cached=false" | tee -a $GITHUB_OUTPUT $GITHUB_STEP_SUMMARY
             exit 0
           fi
