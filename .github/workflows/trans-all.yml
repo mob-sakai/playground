@@ -1,0 +1,78 @@
+name: "TransAll"
+
+on:
+  workflow_dispatch:
+
+env:
+  unityImageTo: ghcr.io/mob-sakai/unity3d
+  unityImageFrom: docker.io/mobsakai/unity3d
+  minUnityVersion: 2019.4
+
+jobs:
+  trans-all:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      actions: write
+    strategy:
+      fail-fast: false
+      matrix:
+        module:
+          - base
+          - linux-il2cpp
+          - windows-mono
+          - mac-mono
+          - ios
+          - android
+          - webgl
+    steps:
+      ###########################
+      #          Setup          #
+      ###########################
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: mob-sakai
+          password: ${{ github.token }}
+      - name: "⚙️ Setup"
+        id: setup
+        run: |
+          # If all the combination tags to be built are existed in the registry -> steps.setup.outputs.skip=true
+
+          echo "======== Exist tags in ghcr.io ========"
+          skopeo list-tags docker://${{ env.unityImageTo }}  | jq -r '.Tags[]' | grep -v '^ubuntu' | grep -e "-${{ matrix.module }}$" | tee .existTagsTo || :
+
+          echo "======== Exist tags in docker.io ========"
+          skopeo list-tags docker://${{ env.unityImageFrom }}  | jq -r '.Tags[]' | grep -v '^ubuntu' | grep -e "-${{ matrix.module }}$" | tee .existTagsFrom || :
+
+          echo "======== Available Unity versions ========"
+          npx unity-changeset list --versions --min ${{ env.minUnityVersion }} --all | tee .unityVersions
+
+          echo "======== Unity versions to build ========"
+          UNITY_VERSIONS_TO_BUILD=`for version in $(cat .unityVersions) ; do \
+              [ -z "$(grep -x ${version}-${{ matrix.module }} .existTagsTo)" ] \
+              [ -n "$(grep -x ${version}-${{ matrix.module }} .existTagsFrom)" ] \
+              && echo "${version}" || : ; \
+          done`
+
+          if [ -z "${UNITY_VERSIONS_TO_BUILD}" ]; then
+            echo "::warning::No versions to build."
+            echo "skip=true" >> $GITHUB_OUTPUT
+          fi
+
+          echo "======== Output ========"
+          VERSIONS_JSON=`echo "${UNITY_VERSIONS_TO_BUILD}" | head -n 100 | jq -R '.' | jq -s -c '.' | jq -R '.' || echo '[]'`
+          echo "versions=${VERSIONS_JSON}" | tee -a $GITHUB_OUTPUT $GITHUB_STEP_SUMMARY
+
+      ###########################
+      #  Dispatch Trans  #
+      ###########################
+      - name: "🚀 Dispatch 'Trans'"
+        # If there is no version to be built, the build will be skipped.
+        if: steps.setup.outputs.skip != 'true'
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: "Trans"
+          token: ${{ github.token }}
+          inputs: '{ "versions": ${{ steps.setup.outputs.versions }}, "module": "${{ matrix.module }}" }'
+          ref: ${{ github.ref }}
