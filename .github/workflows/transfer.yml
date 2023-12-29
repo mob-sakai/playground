@@ -23,14 +23,14 @@ env:
 
 jobs:
   build:
-    name: Transfer ${{ matrix.unityVersions }}-${{ inputs.module }}
+    name: Transfer ${{ matrix.unityVersions }}${{ inputs.module }}${{ inputs.version }}
     runs-on: ubuntu-latest
     permissions:
       packages: write
       actions: write
     env:
       tag: ${{ matrix.unityVersions }}${{ inputs.module }}${{ inputs.version }}
-      tagWithoutVersion: ${{ matrix.unityVersions }}${{ inputs.module }}${{ inputs.version }}
+      tagWithoutVersion: ${{ matrix.unityVersions }}${{ inputs.module }}
     strategy:
       max-parallel: 1
       fail-fast: false
