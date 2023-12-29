@@ -57,7 +57,7 @@ jobs:
         run: |
           docker tag ${{ env.unityImageFrom }}:${{ env.tag }} ${{ env.unityImageTo }}:${{ env.tagWithoutVersion }}
           docker push ${{ env.unityImageTo }}:${{ env.tagWithoutVersion }}
-          echo "versionWithV=`echo ${{ inputs.version }} | sed 's/-/v/' | sed 's/vv/v/'`" | tee $GITHUB_OUTPUT
+          echo "versionWithV=`echo ${{ inputs.version }} | sed 's/-/-v/' | sed 's/vv/v/'`" | tee $GITHUB_OUTPUT
 
       - name: Transfer to ${{ env.unityImageTo }}:${{ env.tagWithoutVersion }}${{ steps.tr.outputs.versionWithV }}
         if: inputs.version != '' && inputs.version != steps.tr.outputs.versionWithV
