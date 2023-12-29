@@ -31,7 +31,7 @@ jobs:
       tag: ${{ matrix.unityVersions }}${{ inputs.module }}${{ inputs.version }}
       tagWithoutVersion: ${{ matrix.unityVersions }}${{ inputs.module }}
     strategy:
-      max-parallel: 1
+      max-parallel: 2
       fail-fast: false
       matrix:
         unityVersions: ${{ fromJson(inputs.unityVersions) }}

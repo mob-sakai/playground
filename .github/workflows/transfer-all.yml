@@ -11,7 +11,7 @@ env:
   unityImageTo: ghcr.io/mob-sakai/unity3d
   unityImageFrom: docker.io/mobsakai/unity3d
   minUnityVersion: 2019.4
-  maxDispatch: 1
+  maxDispatch: 100
 
 jobs:
   trans-all:
