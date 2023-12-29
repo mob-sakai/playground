@@ -1,4 +1,3 @@
-
 name: "Transfer"
 
 on:
@@ -11,11 +10,11 @@ on:
       module:
         description: "Unity modules array to build.\n(-base|-linux-il2cpp|-windows-mono|-mac-mono|-ios|-android|-webgl)"
         required: true
-        default: '-base'
+        default: "-base"
       version:
         description: "Image version (e.g. -1.3.0)"
         required: true
-        default: '-1.3.0'
+        default: "-1.3.0"
 
 env:
   unityImageTo: ghcr.io/mob-sakai/unity3d
@@ -42,17 +41,32 @@ jobs:
           registry: ghcr.io
           username: mob-sakai
           password: ${{ github.token }}
-      - run: |
-          echo "Transfer ${{ env.unityImageFrom }}:${{ env.tag }} -> ${{ env.unityImageTo }}:${{ env.tag }}"
+
+      - name: Pull ${{ env.unityImageFrom }}:${{ env.tag }}
+        run: |
           docker pull ${{ env.unityImageFrom }}:${{ env.tag }}
+
+      - name: Transfer to ${{ env.unityImageTo }}:${{ env.tag }}
+        run: |
           docker tag ${{ env.unityImageFrom }}:${{ env.tag }} ${{ env.unityImageTo }}:${{ env.tag }}
           docker push ${{ env.unityImageTo }}:${{ env.tag }}
-      - if: inputs.version != ''
+
+      - name: Transfer to ${{ env.unityImageTo }}:${{ env.tagWithoutVersion }}
+        id: tr
+        if: inputs.version != ''
         run: |
-          echo "Transfer ${{ env.unityImageFrom }}:${{ env.tag }} -> ${{ env.unityImageTo }}:${{ env.tagWithoutVersion }}"
           docker tag ${{ env.unityImageFrom }}:${{ env.tag }} ${{ env.unityImageTo }}:${{ env.tagWithoutVersion }}
           docker push ${{ env.unityImageTo }}:${{ env.tagWithoutVersion }}
-      - if: inputs.module == '-base'
+          echo "versionWithV=`echo ${{ inputs.version }} | sed 's/-/v/' | sed 's/vv/v/'`" | tee $GITHUB_OUTPUT
+
+      - name: Transfer to ${{ env.unityImageTo }}:${{ env.tagWithoutVersion }}${{ steps.tr.outputs.versionWithV }}
+        if: inputs.version != '' && inputs.version != steps.tr.outputs.versionWithV
+        run: |
+          docker tag ${{ env.unityImageFrom }}:${{ env.tag }} ${{ env.unityImageTo }}:${{ env.tagWithoutVersion }}${{ steps.tr.outputs.versionWithV }}
+          docker push ${{ env.unityImageTo }}:${{ env.tagWithoutVersion }}${{ steps.tr.outputs.versionWithV }}
+
+      - name: Transfer to ${{ env.unityImageTo }}:${{ matrix.unityVersions }}
+        if: inputs.module == '-base'
         run: |
           echo "Transfer ${{ env.unityImageFrom }}:${{ env.tag }} -> ${{ env.unityImageTo }}:${{ matrix.unityVersions }}"
           docker tag ${{ env.unityImageFrom }}:${{ env.tag }} ${{ env.unityImageTo }}:${{ matrix.unityVersions }}
