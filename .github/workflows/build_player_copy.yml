@@ -1,4 +1,4 @@
-name: NameTest (${{ inputs.repository }}, ${{ inputs.ref }})
+name: NameTest
 
 on:
   workflow_dispatch:
