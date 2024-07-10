@@ -1,0 +1,32 @@
+name: NameTest (${{ inputs.repository }}, ${{ inputs.ref }})
+
+on:
+  workflow_dispatch:
+    inputs:
+      repository:
+        description: The repository to run the workflow on
+        type: string
+      ref:
+        description: The branch or tag to checkout
+        type: string
+      unityVersion:
+        description: The Unity version to build the player with
+        default: 2022.3.36f1
+        required: true
+        type: string
+      targetPlatform:
+        description: The target platform for the player (e.g. WebGL, iOS, Android)
+        required: true
+        type: string
+
+jobs:
+  build:
+    name: NameTest (${{ inputs.repository }}, ${{ inputs.ref }})
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🚚 Checkout (${{ inputs.repository }}, ${{ inputs.ref }})
+        run: |
+          echo "repository: ${{ inputs.repository }}"
+          echo "ref: ${{ inputs.ref }}"
+          echo "unityVersion: ${{ inputs.unityVersion }}"
+          echo "targetPlatform: ${{ inputs.targetPlatform }}"
