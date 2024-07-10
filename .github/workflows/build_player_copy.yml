@@ -1,4 +1,5 @@
 name: NameTest
+run-name: NameTest ${{ inputs.repository }} ${{ inputs.ref }} ${{ inputs.unityVersion }}  ${{ inputs.targetPlatform }}
 
 on:
   workflow_dispatch:
