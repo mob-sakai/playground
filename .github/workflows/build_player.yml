@@ -3,6 +3,7 @@
 #   UNITY_EMAIL
 #   UNITY_PASSWOARD
 name: 🎮 Build Unity Player
+run-name: 🎮 Build ${{ inputs.repository }}#${{ inputs.ref }}, (${{ inputs.targetPlatforms }}, ${{ inputs.unityVersion }})
 
 on:
   workflow_call:
@@ -18,8 +19,9 @@ on:
         default: 2022.3.36f1
         required: true
         type: string
-      targetPlatform:
+      targetPlatforms:
         description: The target platform for the player (e.g. WebGL, iOS, Android)
+        default: '["WebGL", "iOS", "Android"]'
         required: true
         type: string
     secrets:
@@ -39,17 +41,21 @@ on:
         default: 2022.3.36f1
         required: true
         type: string
-      targetPlatform:
-        description: The target platform for the player (e.g. WebGL, iOS, Android)
+      targetPlatforms:
+        description: The target platforms for the player (e.g. WebGL, iOS, Android)
+        default: '["WebGL", "iOS", "Android"]'
         required: true
         type: string
 
 jobs:
   build:
-    name: 🎮 Build Player
+    name: 🎮 Build Player (${{ matrix.targetPlatform }}, ${{ inputs.unityVersion }})
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    strategy:
+      matrix:
+        targetPlatform: ${{ fromJson(inputs.targetPlatforms) }}
     steps:
       - name: 🚚 Checkout (${{ inputs.repository }}, ${{ inputs.ref }})
         uses: actions/checkout@v4
@@ -74,11 +80,11 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           unityVersion: ${{ inputs.unityVersion }}
-          targetPlatform:  ${{ inputs.targetPlatform }}
+          targetPlatform:  ${{ matrix.targetPlatform }}
           allowDirtyBuild: true
 
       - name: 📦 Upload Player
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build
           path: build
