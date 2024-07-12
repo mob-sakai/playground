@@ -54,6 +54,7 @@ jobs:
     permissions:
       contents: read
     strategy:
+      fail-fast: false
       matrix:
         targetPlatform: ${{ fromJson(inputs.targetPlatforms) }}
     steps:
@@ -86,5 +87,5 @@ jobs:
       - name: 📦 Upload Player
         uses: actions/upload-artifact@v4
         with:
-          name: build
-          path: build
+          name: ${{ matrix.targetPlatform }}
+          path: build/${{ matrix.targetPlatform }}
