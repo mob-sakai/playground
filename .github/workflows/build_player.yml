@@ -3,7 +3,7 @@
 #   UNITY_EMAIL
 #   UNITY_PASSWOARD
 name: 🎮 Build Unity Player
-run-name: 🎮 Build ${{ inputs.repository }}#${{ inputs.ref }}, (${{ inputs.targetPlatforms }}, ${{ inputs.unityVersion }})
+run-name: 🎮 Build ${{ inputs.repository }}#${{ inputs.ref }} (${{ inputs.unityVersion }})
 
 on:
   workflow_call:
@@ -68,9 +68,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: Library
-          key: Library-${{ inputs.repository }}-${{ inputs.ref }}-${{ inputs.unityVersion }}-${{ inputs.targetPlatform }}-${{ github.sha }}
+          key: Library-${{ inputs.repository }}-${{ inputs.ref }}-${{ inputs.unityVersion }}-${{ matrix.targetPlatform }}-${{ github.sha }}
           restore-keys: |
-            Library-${{ inputs.repository }}-${{ inputs.ref }}-${{ inputs.unityVersion }}-${{ inputs.targetPlatform }}-
+            Library-${{ inputs.repository }}-${{ inputs.ref }}-${{ inputs.unityVersion }}-${{ matrix.targetPlatform }}-
 
       - name: 🛠️ Build Player
         uses: game-ci/unity-builder@v4
