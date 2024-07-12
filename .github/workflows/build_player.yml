@@ -20,7 +20,7 @@ on:
         required: true
         type: string
       targetPlatforms:
-        description: The target platform for the player (e.g. WebGL, iOS, Android)
+        description: The target platform for the player (e.g. WebGL, iOS, Android, StandaloneOSX, StandaloneWindows64)
         default: '["WebGL", "iOS", "Android"]'
         required: true
         type: string
@@ -87,5 +87,5 @@ jobs:
       - name: 📦 Upload Player
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.targetPlatform }}
+          name: Build-${{ matrix.targetPlatform }}
           path: build/${{ matrix.targetPlatform }}
