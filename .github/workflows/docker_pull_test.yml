@@ -9,6 +9,7 @@ jobs:
     name: 🧪 Docker Pull Test
     runs-on: ubuntu-latest
     strategy:
+      max-parallel: 6
       matrix:
         docker_image:
           - docker.io/unityci/editor:ubuntu-6000.0.21f1-base-3.1.0
@@ -24,3 +25,4 @@ jobs:
           end_time=`date +%s`
           echo "${{ matrix.docker_image }}" | tee -a $GITHUB_STEP_SUMMARY
           echo "Time taken: $((end_time - start_time)) seconds" | tee -a $GITHUB_STEP_SUMMARY
+          docker history ${{ matrix.docker_image }} | tee -a $GITHUB_STEP_SUMMARY
