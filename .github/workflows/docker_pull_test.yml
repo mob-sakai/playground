@@ -1,0 +1,26 @@
+name: 🧪 Docker Pull Test
+
+
+on:
+  workflow_dispatch:
+
+jobs:
+  docker-pul-test:
+    name: 🧪 Docker Pull Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        docker_image:
+          - docker.io/unityci/editor:ubuntu-6000.0.21f1-base-3.1.0
+          - docker.io/unityci/editor:ubuntu-6000.0.21f1-android-3.1.0
+          - docker.io/mobsakai/unity3d:6000.0.21f1-base
+          - docker.io/mobsakai/unity3d:6000.0.21f1-android
+          - ghcr.io/mob-sakai/unity3d:6000.0.21f1-base
+          - ghcr.io/mob-sakai/unity3d:6000.0.21f1-android
+    steps:
+      - run: |
+          start_time=`date +%s`
+          docker pull ${{ matrix.docker_image }}
+          end_time=`date +%s`
+          echo "${{ matrix.docker_image }}" | tee -a $GITHUB_STEP_SUMMARY
+          echo "Time taken: $((end_time - start_time)) seconds" | tee -a $GITHUB_STEP_SUMMARY
