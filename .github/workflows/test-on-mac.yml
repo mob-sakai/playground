@@ -1,0 +1,38 @@
+name: 🧪 Test on Mac
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'The version to test. (e.g. 2021.3.0f1)'
+        required: true
+        default: "2022.3.67f2"
+
+jobs:
+  ###########################
+  #    Build base and hub   #
+  ###########################
+  test-on-mac:
+    name: 🧪 Test on Mac
+    runs-on: macos-latest
+    steps:
+      ###########################
+      #          Setup          #
+      ###########################
+      - name: 🚚 Checkout
+        uses: actions/checkout@v5
+        with:
+          repository: mob-sakai/docker
+
+      - name: 🛠️ Build Unity Project ${{ inputs.version }}
+        uses: game-ci/unity-builder@v4
+        with:
+          unityVersion: ${{ inputs.version }}
+          projectPath: reference-project
+          targetPlatform: Android
+          allowDirtyBuild: true
+          customParameters: -nographics
+        env:
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
