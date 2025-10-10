@@ -25,7 +25,7 @@ jobs:
           repository: mob-sakai/docker
 
       - name: 🛠️ Build Unity Project ${{ inputs.version }}
-        uses: game-ci/unity-builder@v4
+        uses: game-ci/unity-builder@main
         with:
           unityVersion: ${{ inputs.version }}
           projectPath: reference-project
