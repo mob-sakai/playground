@@ -13,9 +13,10 @@ jobs:
       matrix:
         image:
           - mobsakai/unity3d:6000.2.7f2-base-v1.5.1
+          - ghcr.io/mob-sakai/unity3d:6000.2.7f2-base-v1.5.1
           - unityci/editor:ubuntu-6000.2.7f2-base-3.1.0
 
     steps:
       - run: |
-          time docker pull ${{ matrix.image }}
+          (time docker pull ${{ matrix.image }}) 2>> $GITHUB_STEP_SUMMARY
   
