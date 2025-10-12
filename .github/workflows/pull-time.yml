@@ -1,0 +1,21 @@
+name: pull time
+
+on:
+  workflow_dispatch:
+
+jobs:
+  pull:
+    name: pull time
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+      fail-fast: false
+      matrix:
+        image:
+          - mobsakai/unity3d:6000.2.7f2-base-v1.5.1
+          - unityci/editor:ubuntu-6000.2.7f2-base-3.1.0
+
+    steps:
+      - run: |
+          time docker pull ${{ matrix.image }}
+  
