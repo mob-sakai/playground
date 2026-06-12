@@ -1,0 +1,79 @@
+# Editor build failure reporter
+# ========================================================
+name: 🚨 Report Building Failure
+run-name: 🚨 Report Building Failure (${{ inputs.imageTag }})
+
+on:
+  workflow_dispatch:
+    inputs:
+      imageTag:
+        description: "The image tag that failed to build"
+        required: true
+        default: "2017.4.30f1-webgl-1.0.0"
+
+jobs:
+  comment:
+    name: 📝 Report '${{ inputs.imageTag }}'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    outputs:
+      already-commented: ${{ steps.find-comment.outputs.already-commented }}
+    steps:
+      - name: 🚚 Checkout
+        uses: actions/checkout@v6
+
+      - name: 👤 Login to Github
+        run: gh auth login --with-token < <(echo ${{ github.token }})
+
+      - name: 🔍 Find or create issue
+        id: fi
+        run: |
+          # Find the issue number of the latest issue with the "failure report" label.
+          number=`gh issue list --label "failure report" --json number --jq '.[0].number'`
+
+          # If no such issue exists, create a locked new one and use its number.
+          if [ -z "$number" ]; then
+            gh label create "failure report" --color ededed --force
+            number=`gh issue create --title "🔒 Failed building tags (editor)🚨" --label "failure report" \
+              --body "This issue will be appended with image tags that failed to build." | sed 's#.*/##'`
+            gh issue lock $number --reason off_topic
+          fi
+
+          echo "issue-number=$number" | tee $GITHUB_OUTPUT
+
+      - name: 🔍 Find or create comment
+        id: find-comment
+        run: |
+          # Check if the comment with the same image-tag already exists to avoid duplicate comments.
+          gh issue view $ISSUE_NUMBER --comments --json comments --jq '.comments[].body' | grep $IMAGE_TAG \
+            && echo "already-commented=true" | tee $GITHUB_OUTPUT \
+            || gh issue comment $ISSUE_NUMBER --body $IMAGE_TAG
+        env:
+          IMAGE_TAG: ${{ inputs.imageTag }}
+          ISSUE_NUMBER: ${{ steps.fi.outputs.issue-number }}
+
+  ignore:
+    name: 🚨 Ignore '${{ inputs.imageTag }}'
+    needs: comment
+    if: needs.comment.outputs.already-commented == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: 🚚 Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.ref }}
+
+      - name: 📝 Add the ignored image tag
+        # Append the tag so future runs can skip the same failure.
+        run: echo "${{ inputs.imageTag }}" >> .ignoreTags
+
+      - name: ✅ Commit and push
+        uses: EndBug/add-and-commit@v10
+        with:
+          default_author: github_actions
+          message: ignore ${{ inputs.imageTag }}
+          pull: --rebase --autostash
