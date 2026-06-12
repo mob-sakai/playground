@@ -47,10 +47,6 @@ jobs:
         id: find-comment
         run: |
           # Check if the comment with the same image-tag already exists to avoid duplicate comments.
-          gh issue view $ISSUE_NUMBER --comments --json comments --jq '.comments[].body' | grep $IMAGE_TAG \
-            && echo "already-commented=true" | tee $GITHUB_OUTPUT \
-            || gh issue comment $ISSUE_NUMBER --body $IMAGE_TAG
-
           if gh issue view "$ISSUE_NUMBER" --comments --json comments --jq '.comments[].body' | grep -q "$IMAGE_TAG"; then
             echo "already-commented=true" | tee $GITHUB_OUTPUT
           else
