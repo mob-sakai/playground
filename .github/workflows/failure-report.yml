@@ -50,7 +50,7 @@ jobs:
           if gh issue view "$ISSUE_NUMBER" --comments --json comments --jq '.comments[].body' | grep -q "$IMAGE_TAG"; then
             echo "already-commented=true" | tee $GITHUB_OUTPUT
           else
-            gh issue unlock $ISSUE_NUMBER --reason off_topic
+            gh issue unlock $ISSUE_NUMBER
             gh issue comment "$ISSUE_NUMBER" --body "$IMAGE_TAG"
             gh issue lock $ISSUE_NUMBER --reason off_topic
           fi
