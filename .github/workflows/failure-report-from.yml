@@ -1,0 +1,21 @@
+name: 🚨 Report Building Failure From
+
+on:
+  workflow_dispatch:
+
+jobs:
+  dispatch-build-eitor:
+    name: 🚀 Dispatch
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      ###########################
+      #  Dispatch build editor  #
+      ###########################
+      - name: 🚀 Dispatch
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: failure-report.yml
+          inputs: '{ "imageTag": "2017.4.30f1-webgl-1.0.0"}'
+          ref: ${{ github.ref }}
