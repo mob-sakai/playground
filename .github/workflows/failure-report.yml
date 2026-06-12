@@ -28,7 +28,7 @@ jobs:
         run: gh auth login --with-token < <(echo ${{ github.token }})
 
       - name: 🔍 Find or create issue
-        id: fi
+        id: find-issue
         run: |
           # Find the issue number of the latest issue with the "failure report" label.
           number=`gh issue list --label "failure report" --json number --jq '.[0].number'`
@@ -50,9 +50,17 @@ jobs:
           gh issue view $ISSUE_NUMBER --comments --json comments --jq '.comments[].body' | grep $IMAGE_TAG \
             && echo "already-commented=true" | tee $GITHUB_OUTPUT \
             || gh issue comment $ISSUE_NUMBER --body $IMAGE_TAG
+
+          if gh issue view "$ISSUE_NUMBER" --comments --json comments --jq '.comments[].body' | grep -q "$IMAGE_TAG"; then
+            echo "already-commented=true" | tee $GITHUB_OUTPUT
+          else
+            gh issue unlock $ISSUE_NUMBER --reason off_topic
+            gh issue comment "$ISSUE_NUMBER" --body "$IMAGE_TAG"
+            gh issue lock $ISSUE_NUMBER --reason off_topic
+          fi
         env:
           IMAGE_TAG: ${{ inputs.imageTag }}
-          ISSUE_NUMBER: ${{ steps.fi.outputs.issue-number }}
+          ISSUE_NUMBER: ${{ steps.find-issue.outputs.issue-number }}
 
   ignore:
     name: 🚨 Ignore '${{ inputs.imageTag }}'
@@ -68,7 +76,6 @@ jobs:
           ref: ${{ github.ref }}
 
       - name: 📝 Add the ignored image tag
-        # Append the tag so future runs can skip the same failure.
         run: echo "${{ inputs.imageTag }}" >> .ignoreTags
 
       - name: ✅ Commit and push
