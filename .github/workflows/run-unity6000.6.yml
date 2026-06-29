@@ -1,0 +1,33 @@
+name: "Run Unity 6.6"
+
+on:
+  workflow_dispatch:
+    inputs:
+      imageTag:
+        required: true
+        default: 'ghcr.io/mob-sakai/unity3d:6000.6.0b1'
+
+jobs:
+  build:
+    name: Run Unity 6.6 ${{ inputs.imageTag }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Pull ${{ inputs.imageTag }}
+        run: |
+          docker pull ${{ inputs.imageTag }}
+      
+      - uses: actions/checkout@v7
+        with:
+          repository: mob-sakai/docker
+
+      - run: |
+          echo "${{ secrets.UNITY_LICENSE }}" > ulf
+
+      - name: Build
+        run: |
+          docker run -i -w /home -v "$(pwd):/home" ${{ inputs.imageTag }} /bin/bash <<EOF
+          unity-editor -nographics -manualLicenseFile ulf
+          unity-editor -nographics -accept-apiupdate -projectPath reference-project -buildTarget StandaloneLinux64 -build
+          EOF
