@@ -1,0 +1,35 @@
+name: from-to
+
+on:
+  workflow_dispatch:
+    inputs:
+      unityVersions:
+        description: 'Specify the Unity versions to test. (eg. "[ \"2019.4.41f2\", \"2020.3.15f2\" ]")'
+        required: false
+        default: ''
+
+jobs:
+  setup:
+    name: ⚙️ Setup
+    runs-on: ubuntu-latest
+    permissions: {} # No permissions needed for setup job
+    outputs:
+      unityVersions: ${{ steps.setup.outputs.unityVersions }}
+    steps:
+      - name: 🔑 Secrets check
+        id: setup
+        run: |
+          echo "unityVersions='${{ inputs.unityVersions }}'" | tee $GITHUB_OUTPUT
+          echo "unityVersions='${{ toJson(fromJson(inputs.unityVersions)) }}'" | tee $GITHUB_OUTPUT
+  test:
+    name: 🧪 Run
+    runs-on: ubuntu-latest
+    permissions: {}
+    needs: setup
+    strategy:
+      matrix:
+        unityVersion: ${{ fromJson(needs.setup.outputs.unityVersions) }}
+    steps:
+      - name: 🚚 Checkout ($${{ github.ref }})
+        run: |
+          echo ${{ matrix.unityVersion }}
