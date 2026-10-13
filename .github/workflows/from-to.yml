@@ -20,7 +20,7 @@ jobs:
         id: setup
         run: |
           echo 'unityVersions=${{ inputs.unityVersions }}' | tee $GITHUB_OUTPUT
-          echo 'unityVersions=${{ toJson(fromJson(inputs.unityVersions)) }}' | tee $GITHUB_OUTPUT
+          #echo 'unityVersions=${{ toJson(fromJson(inputs.unityVersions)) }}' | tee $GITHUB_OUTPUT
   test:
     name: 🧪 Run
     runs-on: ubuntu-latest
